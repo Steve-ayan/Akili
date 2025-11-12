@@ -36,8 +36,13 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="alert alert-info">
-                You haven't created any study courses yet. Click the button above to get started!
+            <div class="empty-state text-center p-5">
+                <p class="lead">No courses yet</p>
+                <p class="text-muted">Get started by adding your first course</p>
+                
+                <a href="{% url 'courses:create_course' %}" class="btn btn-primary btn-lg mt-3">
+                    Add Your First Course
+                </a>
             </div>
         {% endif %}
     </section>

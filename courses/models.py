@@ -59,6 +59,10 @@ class CachedLesson(models.Model):
     """
     topic = models.CharField(max_length=500)
     content = models.TextField()
+    
+    # FIX APPLIED HERE: Added the missing field
+    cache_key = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    
     syllabus_version = models.CharField(max_length=50)
     report_count = models.IntegerField(default=0)
     is_validated = models.BooleanField(default=False)

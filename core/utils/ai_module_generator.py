@@ -41,20 +41,28 @@ def trigger_module_generation(course: Course):
     
     response_text = result['content']
     
-    # 2. Parse the JSON response
+    # 2. Parse the JSON response (FIXED LOGIC)
     try:
-        # Some AIs wrap JSON in code blocks, so we attempt to clean it
-        if response_text.startswith('```json'):
-            response_text = response_text.strip().lstrip('```json').rstrip('```')
-            
-        module_list = json.loads(response_text)
+        # Find the start of the JSON list ('[') and the end (']')
+        json_start = response_text.find('[')
+        json_end = response_text.rfind(']') # Find the last ']'
+        
+        if json_start == -1 or json_end == -1:
+             raise ValueError("Could not find valid JSON list boundaries.")
+
+        # Extract only the content between the first [ and the last ]
+        # json_end + 1 ensures the final ']' is included
+        clean_json_text = response_text[json_start:json_end + 1]
+        
+        module_list = json.loads(clean_json_text)
         
         # Basic sanity check
         if not isinstance(module_list, list) or len(module_list) == 0:
-             raise ValueError("AI response was not a valid list.")
+             raise ValueError("AI response was not a valid JSON list object.")
              
     except (json.JSONDecodeError, ValueError) as e:
-        print(f"JSON Parsing Failed for Course {course.id}: {e}")
+        # Note the specific error during parsing
+        print(f"JSON Parsing Failed for Course {course.id}: Error: {e}")
         return False
     
     # --- Data Saving ---
